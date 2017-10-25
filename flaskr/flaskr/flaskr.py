@@ -1,7 +1,6 @@
 import os
 import sqlite3
-from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -21,6 +20,37 @@ def show_entries():
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 
+@app.route('/test1', methods=['GET', 'POST'])
+def print_anything():
+    if request.method != 'GET':
+        return "I'm Alive!"
+
+    if request.is_json and request.get_json():
+        aaaa = request.get_json()
+        return aaaa['teamName']
+    else:
+        return 'not!'
+
+    test = {
+        "body" : "[[PizzaHouse]](http://url_to_text) You have a new Pizza order.",
+        "connectColor" : "#FAC11B",
+        "connectInfo" : [{
+            "title" : "Topping",
+            "description" : "Pepperoni"
+        },
+        {
+            "title": "Location",
+            "description": "Empire State Building, 5th Ave, New York",
+        }]
+    }
+
+    
+    if request.is_json and request.get_json():
+        aaaa = request.get_json()
+        return aaaa['teamName']
+    else:
+        return 'not!'
+
 @app.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
@@ -31,9 +61,6 @@ def add_entry():
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
-
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
